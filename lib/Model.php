@@ -512,8 +512,13 @@ class Model
             $value->attribute_of($this, $name);
         }
 
+        //dont mark as dirty if the value is the same
+        $flag_as_dirty = (isset($this->attributes[$name]) && $this->attributes[$name] === $value) ? false : true;
+
         $this->attributes[$name] = $value;
-        $this->flag_dirty($name);
+        //$this->flag_dirty($name);
+
+        if ($flag_as_dirty) $this->flag_dirty($name);
 
         return $value;
     }
