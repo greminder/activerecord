@@ -118,6 +118,15 @@ class Model
      */
     private $__new_record = true;
 
+
+    /**
+     * Flag to determine if we need to update last modified
+     * there are cases when we do not want to do this
+     *
+     * @var bool
+     */
+    private $__update_last_modified = true;
+
     /**
      * Set to the name of the connection this {@link Model} should use.
      *
@@ -772,6 +781,26 @@ class Model
     }
 
     /**
+     * should we update the last modified
+     *
+     * @return bool
+     */
+    public function should_update_last_modified()
+    {
+        return $this->__update_last_modified;
+    }
+
+
+    /**
+     * setter for last modified
+     *
+     * @param bool $val
+     */
+    public function set_update_last_modified($val = true) {
+        $this->__update_last_modified = $val;
+    }
+
+    /**
      * Throws an exception if this model is set to readonly.
      *
      * @param string $method_name Name of method that was invoked on model for exception message
@@ -1250,7 +1279,7 @@ class Model
     {
         $now = date('Y-m-d H:i:s');
 
-        if (isset($this->updated_at)) {
+        if (isset($this->updated_at) && $this->should_update_last_modified()) {
             $this->updated_at = $now;
         }
 
