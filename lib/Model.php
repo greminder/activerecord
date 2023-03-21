@@ -1843,9 +1843,6 @@ class Model
         }
         $results = count($list);
 
-        //for php 7.2, $values cannot be a string!  must be an array or null
-        if (is_string($values) && !empty($values)) $values = [$values];
-
         if ($results != ($expected = @count((array) $values))) {
             $class = get_called_class();
             if (is_array($values)) {
