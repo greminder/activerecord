@@ -118,6 +118,15 @@ class Model
      */
     private $__new_record = true;
 
+
+    /**
+     * Flag to determine if we need to update last modified
+     * there are cases when we do not want to do this
+     *
+     * @var bool
+     */
+    private $__update_last_modified = true;
+
     /**
      * Set to the name of the connection this {@link Model} should use.
      *
@@ -512,8 +521,13 @@ class Model
             $value->attribute_of($this, $name);
         }
 
+        //dont mark as dirty if the value is the same
+        $flag_as_dirty = (isset($this->attributes[$name]) && $this->attributes[$name] === $value) ? false : true;
+
         $this->attributes[$name] = $value;
-        $this->flag_dirty($name);
+        //$this->flag_dirty($name);
+
+        if ($flag_as_dirty) $this->flag_dirty($name);
 
         return $value;
     }
@@ -764,6 +778,26 @@ class Model
     public function is_new_record()
     {
         return $this->__new_record;
+    }
+
+    /**
+     * should we update the last modified
+     *
+     * @return bool
+     */
+    public function should_update_last_modified()
+    {
+        return $this->__update_last_modified;
+    }
+
+
+    /**
+     * setter for last modified
+     *
+     * @param bool $val
+     */
+    public function set_update_last_modified($val = true) {
+        $this->__update_last_modified = $val;
     }
 
     /**
@@ -1245,7 +1279,7 @@ class Model
     {
         $now = date('Y-m-d H:i:s');
 
-        if (isset($this->updated_at)) {
+        if (isset($this->updated_at) && $this->should_update_last_modified()) {
             $this->updated_at = $now;
         }
 
